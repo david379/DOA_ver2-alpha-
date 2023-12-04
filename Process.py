@@ -16,7 +16,7 @@ def process(w = 5, d = 0.5, m = 1):
     l = []
     
     for i in x[:-1]:
-        sf.write('audio/signal-1.wav', i, 32000)
+        #sf.write('audio/signal-1.wav', i, 32000)
         l.append(da.DOA_ang(i))
     t = np.arange(0, 0.05*len(x) - 0.05, 0.05)
     
