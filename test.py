@@ -13,23 +13,23 @@ import matplotlib.pyplot as plt
 import Process as p
 import multiprocessing as m
 
-if __name__ == '__main__':
-    x_TD,samplerate = sf.read('audio/signalOG.wav');
-    sp = np.arange(int(samplerate*0.05), np.size(x_TD,0), int(samplerate*0.05))
-    x = np.split(x_TD, sp, 0)
+if __name__ == '__main__': #Thi line is necessery for the multiprocessing to work
+    x_TD,samplerate = sf.read('audio/signalOG.wav'); #Loads the entire multichanneled audio file, assumed to be sampled at 32k
+    sp = np.arange(int(samplerate*0.05), np.size(x_TD,0), int(samplerate*0.05)) 
+    x = np.split(x_TD, sp, 0) #Splits the entire file into 50ms bins
 
-    pool = m.pool.Pool(processes = 8);
-    l = [0] * (len(x))
-    t = time.time()
-    l = pool.map(da.DOA_ang, x)
+    pool = m.pool.Pool(processes = 8); #Creates a pool of 8 processes in order to process multiple bins at once
+    l = [0] * (len(x)) #Initialize the list of results, which will contain a DOA angle for every bin
+    t = time.time() #Starts timing the algorithem
+    l = pool.map(da.DOA_ang, x) #Calculates for each bin the DOA angle
     pool.close()
 
-    print(str(t-time.time()))
+    print(str(t-time.time())) #Prnts the total run time
 #%%
 
     t = np.arange(0, 0.05*len(x)-0.05,0.05)
     plt.figure(dpi = 1200)
-    plt.plot(t,l[:-1])
+    plt.plot(t,l[:-1]) #plot the doa over time
     #%%
     def remove_isolated_spikes(datan, window_size=3, min_isolation_distance=1, deviation_factor=2.0):
         """
@@ -67,10 +67,10 @@ if __name__ == '__main__':
         return data
     #%%
     
-    yhat = remove_isolated_spikes(l,window_size=5,deviation_factor=0.05) # window size 51, polynomial order 3
+    yhat = remove_isolated_spikes(l,window_size=5,deviation_factor=0.05)
     plt.figure(dpi = 1200)
     #plt.plot(t[:579],l,'.')
-    plt.plot(t, yhat[:-1], c="b")
+    plt.plot(t, yhat[:-1], c="b") #plot the doa over time after the isolated spike removel
         #%%
         #t = time.time()
         #j = p.process()
